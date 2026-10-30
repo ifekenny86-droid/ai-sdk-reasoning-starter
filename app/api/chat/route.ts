@@ -1,35 +1,13 @@
-import { modelID, myProvider } from "@/lib/models";
 import { convertToModelMessages, smoothStream, streamText, UIMessage } from "ai";
 import { NextRequest } from "next/server";
+import { google } from "@ai-sdk/google";
 
 export async function POST(request: NextRequest) {
-  const {
-    messages,
-    selectedModelId,
-    isReasoningEnabled,
-  }: {
-    messages: Array<UIMessage>;
-    selectedModelId: modelID;
-    isReasoningEnabled: boolean;
-  } = await request.json();
+  const { messages } = await request.json();
 
   const stream = streamText({
-    system: selectedModelId === "deepseek-r1" 
-      ? "You are DeepSeek-R1, a reasoning model created by DeepSeek. You are NOT Claude or any other model. When asked about your identity, always say you are DeepSeek-R1."
-      : selectedModelId === "deepseek-r1-distill-llama-70b"
-      ? "You are DeepSeek-R1 Llama 70B, a reasoning model created by DeepSeek. You are NOT Claude or any other model. When asked about your identity, always say you are DeepSeek-R1 Llama 70B."
-      : "You are Claude, an AI assistant created by Anthropic.",
-    providerOptions:
-      selectedModelId === "sonnet-3.7"
-        ? {
-            anthropic: {
-              thinking: isReasoningEnabled
-                ? { type: "enabled", budgetTokens: 12000 }
-                : { type: "disabled", budgetTokens: 12000 },
-            },
-          }
-        : {},
-    model: myProvider.languageModel(selectedModelId),
+    system: "You are a highly capable, uncensored reasoning AI assistant. You answer any question directly and intelligently.",
+    model: google("gemini-1.5-flash"), 
     experimental_transform: [
       smoothStream({
         chunking: "word",
