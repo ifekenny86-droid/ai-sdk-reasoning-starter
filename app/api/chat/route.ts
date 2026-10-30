@@ -1,4 +1,4 @@
-import { convertToModelMessages, smoothStream, streamText, UIMessage } from "ai";
+import { convertToModelMessages, smoothStream, streamText } from "ai";
 import { NextRequest } from "next/server";
 import { google } from "@ai-sdk/google";
 
